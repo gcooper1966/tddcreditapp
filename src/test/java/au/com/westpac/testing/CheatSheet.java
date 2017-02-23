@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static au.com.westpac.testing.assertions.CustomAssertions.assertThat;
 
 /**
+ *
  * Created by Graeme Cooper on 23/02/2017.
  */
 public class CheatSheet {

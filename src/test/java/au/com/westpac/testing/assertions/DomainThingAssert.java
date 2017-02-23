@@ -4,6 +4,7 @@ import au.com.westpac.testing.CheatSheet;
 import org.assertj.core.api.AbstractAssert;
 
 /**
+ *
  * Created by Graeme Cooper on 23/02/2017.
  */
 public class DomainThingAssert extends AbstractAssert<DomainThingAssert, CheatSheet.DomainThing> {
