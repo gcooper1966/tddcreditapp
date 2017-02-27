@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          version="3.0">
     <display-name>Test Driven development Exemplified</display-name>
     <servlet>
@@ -11,7 +10,7 @@
 
     <servlet-mapping>
         <servlet-name>creditapp</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/tdd/*</url-pattern>
     </servlet-mapping>
 
 </web-app>
