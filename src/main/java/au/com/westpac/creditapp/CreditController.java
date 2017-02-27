@@ -2,6 +2,7 @@ package au.com.westpac.creditapp;
 
 import au.com.westpac.creditapp.repositories.ApplicationRepository;
 import au.com.westpac.creditapp.resources.Application;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -11,13 +12,16 @@ import java.util.List;
  */
 @Controller
 public class CreditController {
-    ApplicationRepository applicationRepository;
+    private ApplicationRepository applicationRepository;
+    private UserManager userManager;
 
-    public CreditController(ApplicationRepository applicationRepository) {
+    @Autowired
+    public CreditController(ApplicationRepository applicationRepository, UserManager userManager) {
         this.applicationRepository = applicationRepository;
+        this.userManager = userManager;
     }
 
     public List<Application> listOutstandingApplications() {
-        return applicationRepository.findByUserId();
+        return applicationRepository.findByUserId(userManager.currentUser().getUserId());
     }
 }

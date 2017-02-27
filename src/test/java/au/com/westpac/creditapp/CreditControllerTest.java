@@ -15,17 +15,23 @@ import static org.mockito.Mockito.when;
 
 
 /**
+ *
  * Created by M041451 on 27/02/2017.
  */
 public class CreditControllerTest {
 
     private CreditController CUT;
     private ApplicationRepository applicationRepository;
+    private UserManager userManager;
+    private User user;
 
     @Before
     public void setUp() throws Exception {
         applicationRepository = mock(ApplicationRepository.class);
-        CUT = new CreditController(applicationRepository);
+        userManager = mock(UserManager.class);
+        user = mock(User.class);
+
+        CUT = new CreditController(applicationRepository, userManager);
     }
 
     @After
@@ -39,7 +45,8 @@ public class CreditControllerTest {
         List<Application> applications = new ArrayList<>(2);
         applications.add(new Application());
         applications.add(new Application());
-        when(applicationRepository.findByUserId()).thenReturn(applications);
+        when(userManager.currentUser()).thenReturn(user);
+        when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
         List<Application> actual = CUT.listOutstandingApplications();
         assertThat(actual.size()).isEqualTo(2);
     }
