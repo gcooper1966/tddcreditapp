@@ -10,4 +10,6 @@ import java.util.List;
  */
 public interface ApplicationRepository {
     List<Application> findByUserId(Identifier<?> userId);
+
+    List<Application> findRejected(Identifier<?> userId);
 }

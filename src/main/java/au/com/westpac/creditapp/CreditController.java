@@ -24,4 +24,8 @@ public class CreditController {
     public List<Application> listOutstandingApplications() {
         return applicationRepository.findByUserId(userManager.currentUser().getUserId());
     }
+
+    public List<Application> listRejectedApplications() {
+        return applicationRepository.findRejected(userManager.currentUser().getUserId());
+    }
 }
