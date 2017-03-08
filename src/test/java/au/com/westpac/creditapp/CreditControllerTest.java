@@ -2,18 +2,22 @@ package au.com.westpac.creditapp;
 
 import au.com.westpac.creditapp.repositories.ApplicationRepository;
 import au.com.westpac.creditapp.resources.Application;
+import au.com.westpac.testing.utils.Log4j2MockAppenderConfigurer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.LogEvent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -26,10 +30,12 @@ public class CreditControllerTest {
     private ApplicationRepository applicationRepository;
     private UserManager userManager;
     private User user;
+    private final Appender mockAppender = mock(Appender.class);
     private static List<Application> applications;
 
     @Before
     public void setUp() throws Exception {
+
         applicationRepository = mock(ApplicationRepository.class);
         userManager = mock(UserManager.class);
         user = mock(User.class);
@@ -49,6 +55,7 @@ public class CreditControllerTest {
     public void can_list_outstanding_applications() throws InvalidUserException {
         //arrange
         List<Application> applications = getApplications();
+        when(user.isValid()).thenReturn(true);
         when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
         //act
         List<Application> actual = CUT.listOutstandingApplications();
@@ -66,6 +73,28 @@ public class CreditControllerTest {
         thrown.expect(InvalidUserException.class);
         CUT.listOutstandingApplications();
     }
+
+    @Test
+    public void list_applications_logs_success_calls() throws InvalidUserException {
+        ArgumentCaptor<LogEvent> logEvent = ArgumentCaptor.forClass(LogEvent.class);
+        when(user.isValid()).thenReturn(true);
+        when(mockAppender.getName()).thenReturn("mockappender");
+        Log4j2MockAppenderConfigurer.addAppender(mockAppender);
+        List<Application> applications = getApplications();
+        when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
+
+        CUT.listOutstandingApplications();
+
+        verify(mockAppender).append(logEvent.capture());
+        assertThat(logEvent.getValue().getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(logEvent.getValue().getMessage().getFormattedMessage()).startsWith("Successfully");
+    }
+
+    @Test
+    public void list_applications_logs_erors(){
+
+    }
+
     private void initialiseUserMock(List<Application> applications) {
         when(userManager.currentUser()).thenReturn(user);
 

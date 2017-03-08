@@ -11,14 +11,14 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  * Created by M041451 on 9/03/2017.
  */
 public class Log4j2MockAppenderConfigurer {
-    public void addAppender(final Appender mockAppender){
+    public static void addAppender(final Appender mockAppender){
         final LoggerContext context = LoggerContext.getContext(false);
         final Configuration config = context.getConfiguration();
         config.addAppender(mockAppender);
         updateLoggers(mockAppender, config);
     }
 
-    private void updateLoggers(final Appender appender, final Configuration config) {
+    private static void updateLoggers(final Appender appender, final Configuration config) {
         final Level level = null;
         final Filter filter = null;
         for (final LoggerConfig loggerConfig : config.getLoggers().values()) {
