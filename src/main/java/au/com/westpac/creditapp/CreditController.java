@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Controller
 public class CreditController {
+
     private ApplicationRepository applicationRepository;
     private UserManager userManager;
 
@@ -21,7 +22,11 @@ public class CreditController {
         this.userManager = userManager;
     }
 
-    public List<Application> listOutstandingApplications() {
+    public List<Application> listOutstandingApplications() throws InvalidUserException {
+        User user = userManager.currentUser();
+        if(!user.isValid()){
+            throw new InvalidUserException();
+        }
         return applicationRepository.findByUserId(userManager.currentUser().getUserId());
     }
 

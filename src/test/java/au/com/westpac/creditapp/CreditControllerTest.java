@@ -4,7 +4,9 @@ import au.com.westpac.creditapp.repositories.ApplicationRepository;
 import au.com.westpac.creditapp.resources.Application;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +46,7 @@ public class CreditControllerTest {
     }
 
     @Test
-    public void can_list_outstanding_applications(){
+    public void can_list_outstanding_applications() throws InvalidUserException {
         //arrange
         List<Application> applications = getApplications();
         when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
@@ -54,6 +56,16 @@ public class CreditControllerTest {
         assertThat(actual.size()).isEqualTo(2);
     }
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+    public void cannot_list_applications_without_a_valid_user() throws InvalidUserException {
+        List<Application> applications = getApplications();
+        when(user.isValid()).thenReturn(false);
+        thrown.expect(InvalidUserException.class);
+        CUT.listOutstandingApplications();
+    }
     private void initialiseUserMock(List<Application> applications) {
         when(userManager.currentUser()).thenReturn(user);
 

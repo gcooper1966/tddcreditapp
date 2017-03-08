@@ -5,4 +5,6 @@ package au.com.westpac.creditapp;
  */
 public interface User {
     Identifier<?> getUserId();
+
+    boolean isValid();
 }
