@@ -30,12 +30,13 @@ public class CreditControllerTest {
     private ApplicationRepository applicationRepository;
     private UserManager userManager;
     private User user;
+    private Identifier<String> id;
     private final Appender mockAppender = mock(Appender.class);
     private static List<Application> applications;
 
     @Before
     public void setUp() throws Exception {
-
+        id = mock(Identifier.class);
         applicationRepository = mock(ApplicationRepository.class);
         userManager = mock(UserManager.class);
         user = mock(User.class);
@@ -55,7 +56,6 @@ public class CreditControllerTest {
     public void can_list_outstanding_applications() throws InvalidUserException {
         //arrange
         List<Application> applications = getApplications();
-        when(user.isValid()).thenReturn(true);
         when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
         //act
         List<Application> actual = CUT.listOutstandingApplications();
@@ -77,8 +77,6 @@ public class CreditControllerTest {
     @Test
     public void list_applications_logs_success_calls() throws InvalidUserException {
         ArgumentCaptor<LogEvent> logEvent = ArgumentCaptor.forClass(LogEvent.class);
-        when(user.isValid()).thenReturn(true);
-        when(mockAppender.getName()).thenReturn("mockappender");
         Log4j2MockAppenderConfigurer.addAppender(mockAppender);
         List<Application> applications = getApplications();
         when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
@@ -91,19 +89,8 @@ public class CreditControllerTest {
     }
 
     @Test
-    public void list_applications_logs_erors(){
+    public void list_applications_logs_errors(){
 
-    }
-
-    private void initialiseUserMock(List<Application> applications) {
-        when(userManager.currentUser()).thenReturn(user);
-
-    }
-
-    private static List<Application> getApplications() {
-        applications.add(new Application());
-        applications.add(new Application());
-        return applications;
     }
 
     @Test
@@ -147,5 +134,20 @@ public class CreditControllerTest {
 
     }
 
+    private void configureMockUser() {
+        when(user.isValid()).thenReturn(true);
+        when(id.getId()).thenReturn("my id");
+        doReturn(id).when(user).getUserId();
+    }
 
+    private static List<Application> getApplications() {
+        applications.add(new Application());
+        applications.add(new Application());
+        return applications;
+    }
+
+    private void initialiseUserMock(List<Application> applications) {
+        when(userManager.currentUser()).thenReturn(user);
+        configureMockUser();
+    }
 }
