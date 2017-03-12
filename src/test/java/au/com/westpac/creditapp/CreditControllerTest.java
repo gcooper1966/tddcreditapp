@@ -49,7 +49,7 @@ public class CreditControllerTest {
 
     @After
     public void tearDown() throws Exception {
-
+        Log4j2MockAppenderConfigurer.removeAppender();
     }
 
     @Test
@@ -76,8 +76,7 @@ public class CreditControllerTest {
 
     @Test
     public void list_applications_logs_success_calls() throws InvalidUserException {
-        ArgumentCaptor<LogEvent> logEvent = ArgumentCaptor.forClass(LogEvent.class);
-        Log4j2MockAppenderConfigurer.addAppender(mockAppender);
+        ArgumentCaptor<LogEvent> logEvent = getLogEventArgumentCaptor(Level.DEBUG);
         List<Application> applications = getApplications();
         when(applicationRepository.findByUserId(userManager.currentUser().getUserId())).thenReturn(applications);
 
@@ -88,9 +87,25 @@ public class CreditControllerTest {
         assertThat(logEvent.getValue().getMessage().getFormattedMessage()).startsWith("Successfully");
     }
 
-    @Test
-    public void list_applications_logs_errors(){
+    private ArgumentCaptor<LogEvent> getLogEventArgumentCaptor(final Level logLevel) {
+        reset(mockAppender); //required since the mock is final
+        ArgumentCaptor<LogEvent> logEvent = ArgumentCaptor.forClass(LogEvent.class);
+        Log4j2MockAppenderConfigurer.addAppender(mockAppender, logLevel );
+        return logEvent;
+    }
 
+    @Test
+    public void list_applications_logs_errors() throws InvalidUserException {
+        ArgumentCaptor<LogEvent> logEvent = getLogEventArgumentCaptor(Level.ERROR);
+        List<Application> applications = getApplications();
+        when(user.isValid()).thenReturn(false);
+        try {
+            CUT.listOutstandingApplications();
+        }catch (InvalidUserException ex){
+            verify(mockAppender).append(logEvent.capture());
+            assertThat(logEvent.getValue().getLevel()).isEqualTo(Level.ERROR);
+            assertThat(logEvent.getValue().getMessage().getFormattedMessage()).startsWith("Error has");
+        }
     }
 
     @Test

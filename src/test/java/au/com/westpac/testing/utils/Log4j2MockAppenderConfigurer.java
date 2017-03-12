@@ -13,21 +13,32 @@ import static org.mockito.Mockito.when;
  * Created by M041451 on 9/03/2017.
  */
 public class Log4j2MockAppenderConfigurer {
-    public static void addAppender(final Appender mockAppender){
-        final LoggerContext context = LoggerContext.getContext(false);
-        final Configuration config = context.getConfiguration();
+    public static void addAppender(final Appender mockAppender, final Level logLevel){
+        final Configuration config = getConfiguration();
         when(mockAppender.getName()).thenReturn("mockappender");
         when(mockAppender.isStarted()).thenReturn(true);
         config.addAppender(mockAppender);
-        updateLoggers(mockAppender, config);
+        updateLoggers(mockAppender, config, logLevel);
     }
 
-    private static void updateLoggers(final Appender appender, final Configuration config) {
-        final Level level = Level.DEBUG;
+    private static Configuration getConfiguration() {
+        final LoggerContext context = LoggerContext.getContext(false);
+        return context.getConfiguration();
+    }
+
+    private static void updateLoggers(final Appender appender, final Configuration config, final Level logLevel) {
         final Filter filter = null;
         for (final LoggerConfig loggerConfig : config.getLoggers().values()) {
-            loggerConfig.addAppender(appender, level, filter);
+            loggerConfig.addAppender(appender, logLevel, filter);
         }
-        config.getRootLogger().addAppender(appender, level, filter);
+        config.getRootLogger().addAppender(appender, logLevel, filter);
+    }
+
+    public static void removeAppender(){
+        final Configuration config = getConfiguration();
+        for(final LoggerConfig loggerConfig : config.getLoggers().values()){
+            loggerConfig.removeAppender("mockappender");
+        }
+        config.getRootLogger().removeAppender("mockappender");
     }
 }
