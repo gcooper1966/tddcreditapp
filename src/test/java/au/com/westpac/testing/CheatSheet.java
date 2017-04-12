@@ -1,6 +1,8 @@
 package au.com.westpac.testing;
 
 
+import org.assertj.core.api.Assertions;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.*;
@@ -70,7 +72,7 @@ public class CheatSheet {
         final File actual;
         try{
             actual = folder.newFile();
-            assertThat(actual).exists();
+            Assertions.assertThat(actual).exists();
         }catch(IOException ex){
             fail("Unable to create temporary file, check the permissions for the identity running the tests");
         }
@@ -102,6 +104,7 @@ public class CheatSheet {
     }
 
     @Test
+    @Ignore
     public void use_rules_for_accessing_the_testing_context_to_provide_readability(){
         fail("We failed inside of " + name.getMethodName());
     }

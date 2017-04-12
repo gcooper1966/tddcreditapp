@@ -82,7 +82,7 @@ public class CreditControllerTest {
 
         CUT.listOutstandingApplications();
 
-        verify(mockAppender).append(logEvent.capture());
+        verify(mockAppender, atLeastOnce()).append(logEvent.capture());
         assertThat(logEvent.getValue().getLevel()).isEqualTo(Level.DEBUG);
         assertThat(logEvent.getValue().getMessage().getFormattedMessage()).startsWith("Successfully");
     }
@@ -102,7 +102,7 @@ public class CreditControllerTest {
         try {
             CUT.listOutstandingApplications();
         }catch (InvalidUserException ex){
-            verify(mockAppender).append(logEvent.capture());
+            verify(mockAppender, atLeastOnce()).append(logEvent.capture());
             assertThat(logEvent.getValue().getLevel()).isEqualTo(Level.ERROR);
             assertThat(logEvent.getValue().getMessage().getFormattedMessage()).startsWith("Error has");
         }

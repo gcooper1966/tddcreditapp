@@ -3,12 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
-    <context:component-scan base-package="au.com.westpac"/>
-    <bean id="mockApplicationRepository" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="au.com.westpac.creditapp.repositories.ApplicationRepository"/>
-    </bean>
-    <bean id="mockUserManager" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="au.com.westpac.creditapp.UserManager"/>
-    </bean>
-
+    <context:component-scan base-package="au.com.westpac.testing"/>
+    <bean id="springAutowiredInterception" class="au.com.westpac.testing.utils.SpringAutowiredInterceptor"/>
 </beans>

@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:testConfig.xml"})
 @WebAppConfiguration
-public class SpringSetupIT {
+public class SpringSetupTest {
     @Autowired
     private WebApplicationContext webApplicationContext;
 
@@ -30,6 +30,7 @@ public class SpringSetupIT {
 
     @Autowired
     private ApplicationRepository applicationRepository;
+
 
     private MockMvc mockMvc;
 
@@ -40,7 +41,7 @@ public class SpringSetupIT {
 
     @Test
     public void context_contains_beans(){
-        assertThat(webApplicationContext.getBean("mockUserManager")).isNotNull();
+        assertThat(webApplicationContext.getBean(UserManager.class));
         assertThat(webApplicationContext.getBean("mockApplicationRepository")).isNotNull();
     }
 
